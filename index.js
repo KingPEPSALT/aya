@@ -52,7 +52,7 @@ for (const file of eventFiles){
 }
 
 process.on('uncaughtException', e=>{
-    console.log(chalk.white.bgRed('FATAL'), e);
+    console.log(chalk.white.redBg('FATAL'), e);
 });
 
 client.login(token);

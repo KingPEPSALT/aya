@@ -9,10 +9,10 @@ module.exports={
     usage: '<user>',
     async execute(msg, args){
         
-        if(msg.mentions.everyone) return msg.channel.send("You cannot get the avatar of everyone.");
+        if(msg.mentions.everyone) return msg.channel.send({embed:{color:0xe83f3f,description:"You cannot get the avatar of everyone."}});
         const user = msg.mentions.users.first() || msg.author;
-        if(!user) return msg.channel.send("There was an error");
+        if(!user) return msg.channel.send({embed:{color:0xe83f3f,description:"I could not find that user!"}});
 
-        return msg.channel.send({embed:{color:0x5dade3, image:user.displayAvatarURL({ format: 'png', dynamic:true, size: 512 })}})
+        return msg.channel.send({embed:{color:0x5dade3, description:`__${user.username}'s avatar__`, image:{url:user.displayAvatarURL({ format: 'png', dynamic:true, size: 512 })}}})
     }
 }
