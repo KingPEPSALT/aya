@@ -2,8 +2,7 @@ const Discord = require("discord.js");
 const ytdl = require('ytdl-core-discord');
 const SongInformation = require('../../song_objects/SongInformation');
 const GuildMusicController = require('../../song_objects/GuildMusicController');
-// error red: 0xe83f3f
-// success green: 0x22e34c
+
 module.exports = {
     name:'play',
     alias:['summon','join', 'p', 'connect'],

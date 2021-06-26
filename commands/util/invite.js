@@ -1,3 +1,4 @@
+
 module.exports = {
     name: 'invite',
     alias:['link'],
@@ -5,6 +6,6 @@ module.exports = {
     args: false,
     guildOnly: false,
     async execute(msg, args){ 
-        return msg.channel.send(`https://discord.com/api/oauth2/authorize?client_id=${msg.client.user.id}&scope=bot`)
+        return msg.channel.send({embed:{color:0x5dade3,description:`[!invite me!](https://discord.com/api/oauth2/authorize?client_id=${msg.client.user.id}&scope=bot)`}})
     }
 }

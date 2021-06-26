@@ -1,3 +1,4 @@
+//info blue 0x5dade3
 const Discord = require('discord.js')
 module.exports={
     name:'avatar',
@@ -12,9 +13,6 @@ module.exports={
         const user = msg.mentions.users.first() || msg.author;
         if(!user) return msg.channel.send("There was an error");
 
-        return msg.channel.send(new Discord.MessageEmbed().setTitle(`${user.username}'s avatar`).setImage(user.displayAvatarURL({ format: 'png', dynamic:true, size: 512 })
-            )
-        )
-
+        return msg.channel.send({embed:{color:0x5dade3, image:user.displayAvatarURL({ format: 'png', dynamic:true, size: 512 })}})
     }
 }
