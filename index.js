@@ -3,7 +3,7 @@ const filesystem = require('fs');
 const Discord = require('discord.js');
 const { token } = require('./config.json');
 const { Users } = require('./economy_database/db_objects');
-
+const chalk = require('chalk')
 
 const client = new Discord.Client()
 
@@ -50,5 +50,9 @@ for (const file of eventFiles){
     if (event.once) {client.once(event.name, (...args) => event.execute(...args, client)) }
     else { client.on(event.name, (...args) => event.execute(...args, client)) };
 }
+
+process.on('UnhandledException', e=>{
+    console.log(chalk.white.bgRed('FATAL'), e);
+});
 
 client.login(token);

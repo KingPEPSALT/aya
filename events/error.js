@@ -1,6 +1,6 @@
 module.exports = {
     name:'error',
     execute(error_msg, client){
-        console.error('[ERROR] ', error_msg);
+        console.error(chalk.redBright('[ERROR] '), error_msg);
     }
 }
