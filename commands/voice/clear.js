@@ -1,3 +1,5 @@
+// error red: 0xe83f3f
+// success green: 0x22e34c
 module.exports = { 
     name:'clear',
     alias: ['empty', 'clearqueue', 'cq'],
@@ -7,6 +9,6 @@ module.exports = {
     async execute(msg, args){
         if(!msg.client.queues.has(msg.guild)) return msg.channel.send('The queue is empty.');
         const returnVal = msg.client.queues.get(msg.guild).clear();
-        return msg.channel.send(returnVal || 'Successfully cleared...');
+        return msg.channel.send(returnVal ? {embed:{color:0xe83f3f, description:returnVal}} : {embed:{color:0x22e34c,description:'Successfully cleared...'}});
     }
 }

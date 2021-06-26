@@ -1,11 +1,13 @@
 
 module.exports = class SongInformation{
 
-    constructor(songInfo){
+    constructor(songInfo, requester){
         this.title = songInfo.videoDetails.title;
         this.channel = songInfo.videoDetails.ownerChannelName;
         this.url = songInfo.videoDetails.video_url;
         this.length = songInfo.videoDetails.lengthSeconds;
+        this.image = songInfo.videoDetails.thumbnails[0];
+        this.requester = requester;
     }
 
     formattedLength(){

@@ -51,7 +51,7 @@ for (const file of eventFiles){
     else { client.on(event.name, (...args) => event.execute(...args, client)) };
 }
 
-process.on('UnhandledException', e=>{
+process.on('uncaughtException', e=>{
     console.log(chalk.white.bgRed('FATAL'), e);
 });
 
