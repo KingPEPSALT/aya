@@ -8,6 +8,14 @@ module.exports = {
     guildOnly:false,
     async execute(msg, args){
         const items = await CurrencyShop.findAll();
-        return msg.channel.send(items.map(i => `${i.name}: £${i.cost}`).join('\n'), {code:true});
+        return msg.channel.send({embed:{
+            color:0x5dade3,
+            title:'Shop',
+            
+            fields:items.map(i => ({
+                name:'\u200B',
+                value:`\`${i.name}\`: £${i.cost}`
+            }))
+        }});
     }
 }

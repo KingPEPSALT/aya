@@ -8,6 +8,6 @@ module.exports = {
     guildOnly: false,
     async execute(msg, args){
         const target = msg.mentions.users.first() || msg.author;
-        return msg.channel.send(`${target.tag} has £${msg.client.currency.getBalance(target.id)}`);
+        return msg.channel.send({embed:{color:0x5dade3,description:`${target.tag} has £${await msg.client.currency.getBalance(target.id)}`}});
     }
 }

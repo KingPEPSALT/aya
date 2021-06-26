@@ -12,13 +12,13 @@ module.exports = {
         const item = await CurrencyShop.findOne({where:{name: {[Op.like]:args.join(' ')}}})
         if(!item) return msg.channel.send(`That item doesn't exist.`)
 
-        if(item.cost > msg.client.currency.getBalance(msg.author.id)) return msg.channel.send("You don't have enough money for that.");
+        if(item.cost > msg.client.currency.getBalance(msg.author.id)) return msg.channel.send({embed:{color:0xe83f3f,description:"You don't have enough money for that."}});
 
         const user = await Users.findOne({where: {user_id:msg.author.id}});
         msg.client.currency.add(msg.author.id, -item.cost);
         await user.addItem(item);
 
-        msg.channel.send(`You've bought ${item.name}.`);
+        msg.channel.send({embed:{color:0x22e34c, description:`You've bought ${item.name}.`}});
 
     }
 }
