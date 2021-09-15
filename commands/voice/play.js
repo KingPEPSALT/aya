@@ -1,5 +1,6 @@
 const Discord = require("discord.js");
 const ytdl = require('ytdl-core-discord');
+const {getInfo} = require('ytdl-getinfo')
 const SongInformation = require('../../song_objects/SongInformation');
 const GuildMusicController = require('../../song_objects/GuildMusicController');
 
@@ -13,6 +14,7 @@ module.exports = {
     async execute(msg, args){
         if(!msg.member.voice.channel) return msg.channel.send({embed:{color:0xe83f3f, description:'You aren\'t in a voice channel.'}});
         await msg.member.voice.channel.join();
+
 
         const song = new SongInformation(await ytdl.getInfo(args[0]), msg.author)
         if(!msg.client.queues.has(msg.guild)){ 

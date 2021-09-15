@@ -1,5 +1,3 @@
-// error red: 0xe83f3f
-// success green: 0x22e34c
 
 module.exports = {
     name:'ban',

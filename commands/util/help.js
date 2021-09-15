@@ -16,13 +16,13 @@ module.exports = {
         if(args[0]) {
             if(!msg.client.commands.has(args[0])) return msg.channel.send({embed:{color:0xe83f3f, description:"That isn't a command sorry."}});
             const command = msg.client.commands.get(args[0])
-            return msg.channel.send({embed:{color:0x5dade3, description:`\`${prefix}${command.name} ${command.usage || ''}\` | ${command.description}`}});
+            return msg.channel.send({embed:{color:0x5dade3, description:`\`${prefix}${command.name}${command.usage ? ' '+command.usage : ''}\` | ${command.description}`}});
         }
         else {
 
             const commandFolders = fs.readdirSync('./commands');
             for (const folder of commandFolders) {
-                string += `**${folder}** -`
+                string += `**${folder.toUpperCase()}** -`
                 const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
                 for (const file of commandFiles) {
                     const command = require(`../${folder}/${file}`);
@@ -30,7 +30,7 @@ module.exports = {
                 }
                 string += `\n`;
             }
-            string += `**For help on a command** - \`${prefix}help <command>\``
+            string += `*For help on a command* - \`${prefix}help <command>\``
 
         };
 
