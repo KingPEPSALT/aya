@@ -1,4 +1,4 @@
-# aya
+# Aya
 
 Aya is a [discord.js](https://discord.js.org/) bot that aims to be well rounded, friendly and have large functionality.
 
