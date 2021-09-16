@@ -22,7 +22,6 @@ module.exports = {
       });
     await msg.member.voice.channel.join();
     var getInfoParam = args[0];
-    console.log(args.join(" "));
     if (!(await ytdl.validateURL(getInfoParam)))
       getInfoParam = await ytsearch
         .GetListByKeyword(args.join(" "))
