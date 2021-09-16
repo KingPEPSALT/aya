@@ -9,22 +9,22 @@ module.exports = class GuildMusicController {
   }
 
   async playTop() {
-    console.log(this.queue[0]);
-    const dispatcher = this.voice.connection.play(
+    this.dispatcher = this.voice.connection.play(
       await ytdl(this.queue[0].url).catch((e) => {
         throw new Error("Invalid URL: " + this.queue[0].url + " | " + e);
       }),
       { type: "opus", highWaterMark: 100, volume: false }
     );
     if (this.paused) this.pause();
-    dispatcher.once("finish", () => {
-      if (this.queue.length == 0) return dispatcher.destroy();
+    this.dispatcher.once("finish", () => {
+      if (this.queue.length == 0) return this.dispatcher.destroy();
       this.skip();
     });
   }
 
   skip() {
     if (this.queue.length == 0) return "The queue is empty.";
+    if (this.queue.length == 1) this.dispatcher.destroy();
     this.queue.shift();
     if (!this.queue.length == 0) {
       this.playTop();
