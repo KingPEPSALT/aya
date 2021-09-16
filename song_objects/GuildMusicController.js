@@ -1,5 +1,5 @@
 const { exceptions } = require("winston");
-const ytdl = require("ytdl-core-discord");
+const ytdl = require("./ytdl-discord");
 module.exports = class GuildMusicController {
   constructor(voiceState, queue) {
     this.voice = voiceState;
