@@ -25,7 +25,7 @@ module.exports = {
             },
           }
         : {
-            embed: { color: 0xe83f3f, description: "That is not a valid song" },
+            embed: { color: 0xe83f3f, description: returnVal},
           }
     );
   },
