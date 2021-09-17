@@ -5,7 +5,19 @@ module.exports = class GuildMusicController {
     this.voice = voiceState;
     this.queue = queue || [];
     this.paused = queue.length == 0 ? true : false;
+
+    this.loopQueue = false;
+    this.loopSong = false;
+
     if (!this.paused) this.playTop();
+  }
+
+  queueLoop() {
+    return (this.loopQueue = !this.loopQueue);
+  }
+
+  loop() {
+    return (this.loopSong = !this.loopSong);
   }
 
   async playTop() {
@@ -18,7 +30,11 @@ module.exports = class GuildMusicController {
     );
     if (this.paused) this.pause();
     this.dispatcher.once("finish", () => {
-      if (this.queue.length == 0) return this.dispatcher.destroy();
+      if (this.loopSong) return this.playTop();
+      if (this.loopQueue) {
+        this.enqueue(this.queue.shift());
+        return this.playTop();
+      }
       this.skip();
     });
   }
@@ -85,10 +101,7 @@ module.exports = class GuildMusicController {
 
   currentElapsedTime() {
     if (this.empty()) return "Nothing is playing.";
-    return (
-      this.voice.connection.dispatcher.streamTime -
-      this.voice.connection.dispatcher.pausedTime
-    );
+    return this.dispatcher.streamTime - this.dispatcher.pausedTime;
   }
 
   displayQueue() {

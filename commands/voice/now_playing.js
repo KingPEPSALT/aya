@@ -26,6 +26,9 @@ module.exports = {
     }${Math.floor(elapsedSeconds / 60)}:${elapsedSeconds % 60 < 10 ? 0 : ""}${
       elapsedSeconds % 60
     }`;
+
+    let position = Math.round(elapsedSeconds / (song.length / 20));
+    position = position == 0 ? 1 : position;
     const now_playing_message = msg.channel.send({
       embed: {
         color: 0x5dade3,
@@ -36,7 +39,13 @@ module.exports = {
           },
           {
             name: "\u200B",
-            value: `\`${formattedElapsed}/${song.formattedLength()}\``,
+            value: `\`${formattedElapsed}/${song.formattedLength()}\` \`${
+              "[" +
+              "=".repeat(position - 1) +
+              "●" +
+              "=".repeat(20 - position) +
+              "]"
+            }\``,
           },
           {
             name: "\u200B",

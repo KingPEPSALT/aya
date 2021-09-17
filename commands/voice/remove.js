@@ -6,7 +6,6 @@ module.exports = {
   usage: "<song number>",
   guildOnly: true,
   execute(msg, args) {
-    var returnVal;
     if (!msg.client.queues.has(msg.guild))
       return msg.channel.send({
         embed: { color: 0xe83f3f, description: "The queue is empty." },
