@@ -1,25 +1,24 @@
+const { info } = require("winston");
+
 module.exports = {
-  name: "remove",
-  alias: ["rem", "delete", "r"],
-  description: "Removes a song from the queue.",
+  name: "move",
+  description: "Swaps two songs in the queue!",
+  alias: ["mov", "mv", "swap", "swp"],
   args: true,
-  usage: "<song number>",
   guildOnly: true,
+  usage: "<song A number> <song B number>",
   execute(msg, args) {
-    var returnVal;
     if (!msg.client.queues.has(msg.guild))
       return msg.channel.send({
         embed: { color: 0xe83f3f, description: "The queue is empty." },
       });
-    var idx = parseInt(args[0]) - 1;
-
-    returnVal = msg.client.queues.get(msg.guild).remove(idx) || null;
+    returnVal = msg.client.queues.get(msg.guild).swap(args[0] - 1, args[1] - 1);
     return msg.channel.send(
       returnVal == null
         ? {
             embed: {
               color: 0x22e34c,
-              description: `Successfully removed song \`${idx}\` from the queue`,
+              description: `Successfully moved songs \`${args[0]}\` and \`${args[1]}\` in the queue`,
             },
           }
         : {

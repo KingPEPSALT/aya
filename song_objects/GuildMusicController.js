@@ -9,6 +9,7 @@ module.exports = class GuildMusicController {
   }
 
   async playTop() {
+    if (this.dispatcher != null) this.dispatcher.destroy();
     this.dispatcher = this.voice.connection.play(
       await ytdl(this.queue[0].url).catch((e) => {
         throw new Error("Invalid URL: " + this.queue[0].url + " | " + e);
@@ -20,6 +21,10 @@ module.exports = class GuildMusicController {
       if (this.queue.length == 0) return this.dispatcher.destroy();
       this.skip();
     });
+  }
+
+  nowPlaying() {
+    return this.queue[0] || null;
   }
 
   skip() {
@@ -47,7 +52,23 @@ module.exports = class GuildMusicController {
   clear() {
     this.queue = [this.queue[0]];
   }
-
+  swap(idxA, idxB) {
+    if (idxA == idxB) return;
+    if (this.empty()) return "The queue is empty.";
+    if (
+      idxA >= this.queue.length ||
+      idxB >= this.queue.length ||
+      idxB < 0 ||
+      idxA < 0 ||
+      isNaN(idxA) ||
+      isNaN(idxB)
+    )
+      return "That song doesn't exist!";
+    var temporary = this.queue[idxA];
+    this.queue[idxA] = this.queue[idxB];
+    this.queue[idxB] = temporary;
+    if (idxA == 0 || idxB == 0) this.playTop();
+  }
   pause() {
     if (this.empty()) return "Nothing is playing.";
     if (this.paused) return "It is already paused.";
