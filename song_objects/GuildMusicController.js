@@ -37,34 +37,33 @@ module.exports = class GuildMusicController {
   }
 
   remove(idx) {
-    if (idx >= this.queue.length || idx < 1) return "That is an invalid song.";
-    this.queue.splice(1, idx);
+    if (idx >= this.queue.length || idx < 0 || isNaN(idx))
+      return "That is an invalid song.";
+    if (idx == 0) this.dispatcher.destroy();
+    this.queue.splice(idx, 1);
+    console.log("done!");
   }
 
   clear() {
     this.queue = [this.queue[0]];
   }
 
-  nowPlaying() {
-    return this.queue[0] || null;
-  }
-
   pause() {
-    if (!this.nowPlaying()) return "Nothing is playing.";
+    if (this.empty()) return "Nothing is playing.";
     if (this.paused) return "It is already paused.";
     this.voice.connection.dispatcher.pause(true);
     this.paused = true;
   }
 
   resume() {
-    if (!this.nowPlaying()) return "Nothing is playing.";
+    if (this.empty()) return "Nothing is playing.";
     if (!this.paused) return "It isn't paused.";
     this.voice.connection.dispatcher.resume();
     this.paused = false;
   }
 
   currentElapsedTime() {
-    if (!this.nowPlaying()) return "Nothing is playing.";
+    if (this.empty()) return "Nothing is playing.";
     return (
       this.voice.connection.dispatcher.streamTime -
       this.voice.connection.dispatcher.pausedTime
@@ -72,7 +71,7 @@ module.exports = class GuildMusicController {
   }
 
   displayQueue() {
-    if (this.queue.length == 0) return "The queue is empty.";
+    if (this.empty()) return "The queue is empty.";
     return this.queue
       .map(
         (song, position) =>
@@ -81,5 +80,11 @@ module.exports = class GuildMusicController {
           } | Length: ${song.formattedLength()}`
       )
       .join("\n");
+  }
+  length() {
+    return this.queue.length();
+  }
+  empty() {
+    return this.queue.length == 0;
   }
 };

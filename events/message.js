@@ -7,6 +7,7 @@ module.exports = {
     if (!msg.content.startsWith(prefix) || msg.author.bot) return;
 
     const args = msg.content.slice(prefix.length).trim().split(/ +/);
+    if (!args) return;
     const commandName = args.shift().toLowerCase();
 
     const command =
