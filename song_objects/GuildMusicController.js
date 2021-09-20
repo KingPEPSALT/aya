@@ -1,9 +1,9 @@
 const { exceptions } = require("winston");
 const ytdl = require("./ytdl-discord");
 module.exports = class GuildMusicController {
-  constructor(voiceState, queue) {
+  constructor(voiceState, queue = []) {
     this.voice = voiceState;
-    this.queue = queue || [];
+    this.queue = queue;
     this.paused = queue.length == 0 ? true : false;
 
     this.loopQueue = false;

@@ -1,59 +1,65 @@
 const Discord = require("discord.js");
-const ytdl = require("../../song_objects/ytdl-discord");
-const SongInformation = require("../../song_objects/SongInformation");
+const { getPreview } = require("spotify-url-info");
+const ytdl = require("ytdl-core");
 const GuildMusicController = require("../../song_objects/GuildMusicController");
+const SongInformation = require("../../song_objects/SongInformation");
 const ytsearch = require("youtube-search-api");
-const { getData, getPreview, getTracks } = require("spotify-url-info");
-const { getInfo } = require("ytdl-core");
+
 module.exports = {
   name: "play",
-  alias: ["summon", "join", "p", "connect"],
-  description: "Plays a youtube video in the voice chat you are currently in.",
-  args: true,
-  usage: "<url>",
+  alias: ["p", "pl", "summon", "join", "j", "connect", "con"],
+  description: "Plays audio in the voice chat you are currently in.",
   guildOnly: true,
+  args: false,
+  usage: "<video>",
   async execute(msg, args) {
     if (!msg.member.voice.channel)
-      return msg.channel.send({
+      return await msg.channel.send({
         embed: {
           color: 0xe83f3f,
-          description: "You aren't in a voice channel.",
+          description: "You aren't in a voice channel",
         },
       });
     await msg.member.voice.channel.join();
-    var getInfoParam = args[0];
-    if (getInfoParam.startsWith("https://open.spotify")) {
-      var getInfoParam = await getPreview(getInfoParam).then((data) => {
-        return data.title + " " + data.artist;
-      });
-      spotify = true;
-    }
+    if (!args) return;
 
-    if (
-      !(await ytdl.validateURL(getInfoParam)) ||
-      !(await ytdl.validateID(getInfoParam))
+    // create song
+    var search_value;
+    var info_parameter;
+    // check for spotify url
+    if (args[0].startsWith("https://open.spotify"))
+      search_value = await getPreview(args[0]).then((data) => {
+        return `${data.title} ${data.artist}`;
+      });
+    // check for search keywords
+    else if (
+      !(await ytdl.validateURL(args[0])) ||
+      !(await ytdl.validateID(args[0]))
     )
-      getInfoParam = await ytsearch
-        .GetListByKeyword(spotify ? getInfoParam : args.join(" "))
+      search_value = args.join(" ");
+    // must be yt ID/URL if not anything else
+    else info_parameter = args[0];
+
+    // requires a ytsearch
+    if (search_value)
+      info_parameter = await ytsearch
+        .GetListByKeyword(search_value)
         .then((result) => {
           return result.items[0].id;
         });
 
     const song = new SongInformation(
-      await ytdl.getBasicInfo(getInfoParam),
+      await ytdl.getBasicInfo(info_parameter),
       msg.author
     );
+    var queue = msg.client.queues.has(msg.guild)
+      ? msg.client.queues.get(msg.guild)
+      : msg.client.queues
+          .set(msg.guild, new GuildMusicController(msg.guild.voice))
+          .get(msg.guild);
+    queue.enqueue(song);
 
-    if (!msg.client.queues.has(msg.guild)) {
-      msg.client.queues.set(
-        msg.guild,
-        new GuildMusicController(msg.guild.voice, [song])
-      );
-    } else {
-      msg.client.queues.get(msg.guild).enqueue(song);
-    }
-
-    const playing_message = await msg.channel.send({
+    return await msg.channel.send({
       embed: {
         color: 0x22e34c,
         fields: [
@@ -72,7 +78,5 @@ module.exports = {
         thumbnail: song.image,
       },
     });
-    msg.delete();
-    return playing_message;
   },
 };
