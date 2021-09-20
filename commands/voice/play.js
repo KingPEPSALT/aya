@@ -3,7 +3,8 @@ const ytdl = require("../../song_objects/ytdl-discord");
 const SongInformation = require("../../song_objects/SongInformation");
 const GuildMusicController = require("../../song_objects/GuildMusicController");
 const ytsearch = require("youtube-search-api");
-
+const { getData, getPreview, getTracks } = require("spotify-url-info");
+const { getInfo } = require("ytdl-core");
 module.exports = {
   name: "play",
   alias: ["summon", "join", "p", "connect"],
@@ -21,12 +22,19 @@ module.exports = {
       });
     await msg.member.voice.channel.join();
     var getInfoParam = args[0];
+    if (getInfoParam.startsWith("https://open.spotify")) {
+      var getInfoParam = await getPreview(getInfoParam).then((data) => {
+        return data.title + " " + data.artist;
+      });
+      spotify = true;
+    }
+
     if (
       !(await ytdl.validateURL(getInfoParam)) ||
       !(await ytdl.validateID(getInfoParam))
     )
       getInfoParam = await ytsearch
-        .GetListByKeyword(args.join(" "))
+        .GetListByKeyword(spotify ? getInfoParam : args.join(" "))
         .then((result) => {
           return result.items[0].id;
         });
