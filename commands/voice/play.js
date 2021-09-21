@@ -4,7 +4,12 @@ const ytdl = require("ytdl-core");
 const GuildMusicController = require("../../song_objects/GuildMusicController");
 const SongInformation = require("../../song_objects/SongInformation");
 const ytsearch = require("youtube-search-api");
-
+const {
+  isYoutubeIDURL,
+  isSpotifyUrl,
+  getSearchStringFromSpotify,
+  searchForSong,
+} = require("../../song_objects/SongUtil");
 module.exports = {
   name: "play",
   alias: ["p", "pl", "summon", "join", "j", "connect", "con"],
@@ -24,35 +29,20 @@ module.exports = {
     if (!args) return;
 
     // create song
-    var search_value;
+    var search_str;
     var info_parameter;
-    // check for spotify url
-    if (args[0].startsWith("https://open.spotify"))
-      search_value = await getPreview(args[0]).then((data) => {
-        return `${data.title} ${data.artist}`;
-      });
-    // check for search keywords
-    else if (
-      !(await ytdl.validateURL(args[0])) ||
-      !(await ytdl.validateID(args[0]))
-    )
-      search_value = args.join(" ");
-    // must be yt ID/URL if not anything else
-    else info_parameter = args[0];
-
-    // requires a ytsearch
-    if (search_value)
-      info_parameter = await ytsearch
-        .GetListByKeyword(search_value)
-        .then((result) => {
-          return result.items[0].id;
-        });
-
+    if (await isYoutubeIDURL(args[0])) info_parameter = args[0];
+    else {
+      if (await isSpotifyUrl(args[0]))
+        search_str = await getSearchStringFromSpotify(args[0]);
+      else search_str = args.join(" ");
+      info_parameter = await searchForSong(search_str);
+    }
     const song = new SongInformation(
       await ytdl.getBasicInfo(info_parameter),
       msg.author
     );
-    var queue = msg.client.queues.has(msg.guild)
+    const queue = msg.client.queues.has(msg.guild)
       ? msg.client.queues.get(msg.guild)
       : msg.client.queues
           .set(msg.guild, new GuildMusicController(msg.guild.voice))
