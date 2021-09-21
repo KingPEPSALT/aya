@@ -77,8 +77,17 @@ module.exports = {
       msg.reply({
         embed: {
           color: 0x570000,
-          description: `There's been a fatal error!\n__Error__ \`[${e.name}]\` whilst executing \`${command.name}\``,
-          footer: `Don't worry this is my fault and my developer is fixing it!`,
+          fields: [
+            {
+              name: "Fatal Error!",
+              value: `There's been a fatal error!\n__Error__ \`[${e.name}]\` whilst executing \`${command.name}\``,
+            },
+            {
+              name: "\u200B",
+              value: `\`Don't worry this is my fault and my developer is fixing it!\``,
+              inline: true,
+            },
+          ],
         },
       });
     });

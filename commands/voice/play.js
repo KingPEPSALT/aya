@@ -55,7 +55,9 @@ module.exports = {
         fields: [
           {
             name: "♪ Playing ♪",
-            value: `[${song.title} - ${song.channel}](${song.url})`,
+            value: `\`${queue.length()}.\` [${song.title} - ${song.channel}](${
+              song.url
+            })`,
           },
           {
             name: "\u200B",

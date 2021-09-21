@@ -16,7 +16,6 @@ module.exports = {
   },
   async searchForSong(search_param) {
     return await ytsearch.GetListByKeyword(search_param).then((result) => {
-      console.log(result.items[0].id);
       return result.items[0].id;
     });
   },

@@ -4,12 +4,12 @@ module.exports = class GuildMusicController {
   constructor(voiceState, queue = []) {
     this.voice = voiceState;
     this.queue = queue;
-    this.paused = queue.length == 0 ? true : false;
+    this.paused = false;
 
     this.loopQueue = false;
     this.loopSong = false;
 
-    if (!this.paused) this.playTop();
+    if (!this.empty()) this.playTop();
   }
 
   queueLoop() {
@@ -116,7 +116,7 @@ module.exports = class GuildMusicController {
       .join("\n");
   }
   length() {
-    return this.queue.length();
+    return this.queue.length;
   }
   empty() {
     return this.queue.length == 0;
