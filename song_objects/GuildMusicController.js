@@ -22,7 +22,7 @@ module.exports = class GuildMusicController {
 
   async playTop() {
     if (this.dispatcher != null) this.dispatcher.destroy();
-    this.dispatcher = this.voice.connection.play(
+    this.dispatcher = await this.voice.connection.play(
       await ytdl(this.queue[0].url).catch((e) => {
         throw new Error("Invalid URL: " + this.queue[0].url + " | " + e);
       }),
@@ -57,6 +57,10 @@ module.exports = class GuildMusicController {
     if (this.queue.length == 1) this.playTop();
   }
 
+  enqueue_list(songs) {
+    for (const song of songs) this.enqueue(song);
+  }
+
   remove(idx) {
     if (idx >= this.queue.length || idx < 0 || isNaN(idx))
       return "That is an invalid song.";
@@ -86,14 +90,16 @@ module.exports = class GuildMusicController {
     if (idxA == 0 || idxB == 0) this.playTop();
   }
   pause() {
-    if (this.empty()) return "Nothing is playing.";
+    if (this.empty() || this.voice.connection.dispatcher == null)
+      return "Nothing is playing.";
     if (this.paused) return "It is already paused.";
     this.voice.connection.dispatcher.pause(true);
     this.paused = true;
   }
 
   resume() {
-    if (this.empty()) return "Nothing is playing.";
+    if (this.empty() || this.voice.connection.dispatcher == null)
+      return "Nothing is playing.";
     if (!this.paused) return "It isn't paused.";
     this.voice.connection.dispatcher.resume();
     this.paused = false;
@@ -106,14 +112,21 @@ module.exports = class GuildMusicController {
 
   displayQueue() {
     if (this.empty()) return "The queue is empty.";
-    return this.queue
-      .map(
-        (song, position) =>
-          `${position + 1} | ${song.title} - ${
-            song.channel
-          } | Length: ${song.formattedLength()}`
-      )
-      .join("\n");
+    var pages = [];
+    for (let i = 0; i < this.length(); i += 10)
+      pages.push(
+        this.queue
+          .slice(i, i + 10)
+          .map(
+            (song, idx) =>
+              `\`${idx + i + 1}.\` [${song.title} - ${song.channel}](${
+                song.url
+              }) - \`${song.formattedLength()} | Requested by ${
+                song.requester.tag
+              }\``
+          )
+      );
+    return pages.reverse();
   }
   length() {
     return this.queue.length;

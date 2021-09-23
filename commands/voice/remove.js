@@ -10,9 +10,9 @@ module.exports = {
       return msg.channel.send({
         embed: { color: 0xe83f3f, description: "The queue is empty." },
       });
-    var idx = parseInt(args[0]) - 1;
+    var idx = parseInt(args[0]);
 
-    returnVal = msg.client.queues.get(msg.guild).remove(idx) || null;
+    returnVal = msg.client.queues.get(msg.guild).remove(idx - 1) || null;
     return msg.channel.send(
       returnVal == null
         ? {

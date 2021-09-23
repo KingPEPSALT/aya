@@ -18,7 +18,7 @@ module.exports = {
         ? {
             embed: {
               color: 0x22e34c,
-              description: `Successfully moved songs \`${args[0]}\` and \`${args[1]}\` in the queue`,
+              description: `Successfully swapped songs \`${args[0]}\` and \`${args[1]}\` in the queue`,
             },
           }
         : {

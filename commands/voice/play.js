@@ -9,6 +9,8 @@ const {
   isSpotifyUrl,
   getSearchStringFromSpotify,
   searchForSong,
+  isYTPlaylist,
+  getYTPlaylistIDs,
 } = require("../../song_objects/SongUtil");
 module.exports = {
   name: "play",
@@ -27,47 +29,51 @@ module.exports = {
       });
     await msg.member.voice.channel.join();
     if (!args) return;
-
+    // console.log("YTPL ID/URL: " + (await isYTPlaylist(args[0])));
+    // console.log("YTDL ID/URL: " + (await isYoutubeIDURL(args[0])));
     // create song
     var search_str;
-    var info_parameter;
-    if (await isYoutubeIDURL(args[0])) info_parameter = args[0];
+    var info_parameters;
+    if (await isYTPlaylist(args[0]))
+      info_parameters = await getYTPlaylistIDs(args[0]);
+    else if (await isYoutubeIDURL(args[0])) info_parameters = [args[0]];
     else {
       if (await isSpotifyUrl(args[0]))
         search_str = await getSearchStringFromSpotify(args[0]);
       else search_str = args.join(" ");
-      info_parameter = await searchForSong(search_str);
+      info_parameters = [await searchForSong(search_str)];
     }
-    const song = new SongInformation(
-      await ytdl.getBasicInfo(info_parameter),
-      msg.author
-    );
+    var songs = [];
+    for (const param of info_parameters)
+      songs.push(
+        new SongInformation(await ytdl.getBasicInfo(param), msg.author)
+      );
+
     const queue = msg.client.queues.has(msg.guild)
       ? msg.client.queues.get(msg.guild)
       : msg.client.queues
           .set(msg.guild, new GuildMusicController(msg.guild.voice))
           .get(msg.guild);
-    queue.enqueue(song);
-
+    queue.enqueue_list(songs);
     return await msg.channel.send({
       embed: {
         color: 0x22e34c,
         fields: [
           {
             name: "♪ Playing ♪",
-            value: `\`${queue.length()}.\` [${song.title} - ${song.channel}](${
-              song.url
-            })`,
+            value: `\`${queue.length()}.\` [${songs[0].title} - ${
+              songs[0].channel
+            }](${songs[0].url})`,
           },
           {
             name: "\u200B",
-            value: `\`${song.formattedLength()} | Requested by ${
-              song.requester.tag
+            value: `\`${songs[0].formattedLength()} | Requested by ${
+              songs[0].requester.tag
             }\``,
             inline: true,
           },
         ],
-        thumbnail: song.image,
+        thumbnail: songs[0].image,
       },
     });
   },
