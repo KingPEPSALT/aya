@@ -1,7 +1,7 @@
 
 module.exports = {
     name: 'skip',
-    alias: ['s', 'fs'],
+    alias: ['s', 'fs', 'skp'],
     description:'Skips the currently playing song.',
     args: false,
     guildOnly:true,

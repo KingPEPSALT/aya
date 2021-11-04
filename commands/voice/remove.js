@@ -1,6 +1,6 @@
 module.exports = {
   name: "remove",
-  alias: ["rem", "delete", "r"],
+  alias: ["rem", "delete", "r", "rm"],
   description: "Removes a song from the queue.",
   args: true,
   usage: "<song number>",

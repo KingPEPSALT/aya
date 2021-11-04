@@ -14,13 +14,7 @@ require('./models/user_items')(sequelize, Sequelize.DataTypes);
 const force = process.argv.includes('--force') || process.argv.includes('-f');
 
 sequelize.sync({ force }).then(async ()=>{
-    const shop = [
-        CurrencyShop.upsert({name: 'Dirt Tea', cost: 1}),
-        CurrencyShop.upsert({name: 'Breakfast Tea', cost: 5}),
-        CurrencyShop.upsert({name: 'Green Tea', cost: 11}),
-        CurrencyShop.upsert({name: 'Rich Tea', cost: 20}),
-        CurrencyShop.upsert({name: 'Divine Tea', cost: 50})
-    ];
+    const shop = []; // add stuff here in future
     await Promise.all(shop);
     console.log('Database Synced!');
     sequelize.close();

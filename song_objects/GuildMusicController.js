@@ -20,7 +20,7 @@ module.exports = class GuildMusicController {
     return (this.loopSong = !this.loopSong);
   }
 
-  async playTop() {
+  async playTop(tried = false) {
     if (this.dispatcher != null) this.dispatcher.destroy();
     this.dispatcher = await this.voice.connection.play(
       await ytdl(this.queue[0].url).catch((e) => {
@@ -28,17 +28,21 @@ module.exports = class GuildMusicController {
       }),
       { type: "opus", highWaterMark: 100, volume: false }
     );
+    if(this.dispatcher == null && !tried) this.playTop(true); 
     if (this.paused) this.pause();
     this.dispatcher.once("finish", () => {
       if (this.loopSong) return this.playTop();
       if (this.loopQueue) {
         this.enqueue(this.queue.shift());
-        return this.playTop();
+        this.playTop();
+        return;
       }
       this.skip();
     });
   }
-
+  dispatcherStatus(){
+    console.log(this.dispatcher);
+  }
   nowPlaying() {
     return this.queue[0] || null;
   }
@@ -47,9 +51,8 @@ module.exports = class GuildMusicController {
     if (this.queue.length == 0) return "The queue is empty.";
     if (this.queue.length == 1) this.dispatcher.destroy();
     this.queue.shift();
-    if (!this.queue.length == 0) {
-      this.playTop();
-    }
+    if (!this.queue.length == 0) this.playTop();
+
   }
 
   enqueue(song) {
@@ -69,8 +72,13 @@ module.exports = class GuildMusicController {
     console.log("done!");
   }
 
+  destroy(){
+    return this.dispatcher.destroy();
+  }
+
   clear() {
-    this.queue = [this.queue[0]];
+    this.queue = [];
+    this.dispatcher.destroy();
   }
   swap(idxA, idxB) {
     if (idxA == idxB) return;

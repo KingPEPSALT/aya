@@ -9,7 +9,7 @@ const sequelize = new Sequelize('database', 'username', 'password', {
 
 const Users = require('./models/user')(sequelize, Sequelize.DataTypes);
 const CurrencyShop = require('./models/currency_shop')(sequelize, Sequelize.DataTypes);
-const UserItems = require('./models/user_items')(sequelize, Sequelize.DataTypes);
+const UserItems = require('./models/user_workers')(sequelize, Sequelize.DataTypes);
 
 UserItems.belongsTo(CurrencyShop, {foreignKey:'item_id', as: 'item'});
 
