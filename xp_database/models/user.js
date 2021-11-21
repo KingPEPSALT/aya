@@ -1,15 +1,19 @@
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('users', {
+    return sequelize.define('User', {
         user_id:{
             type: DataTypes.STRING,
             primaryKey: true
         },
-        balance:{
-            type: DataTypes.INTEGER,
+        experience:{
+            type: DataTypes.DOUBLE,
             defaultValue: 0,
             allowNull: false,
+        },
+        last_message_time:{
+            type: DataTypes.DATE(6),
+            allowNull: true
         }
     }, {
-        timestamps: false
+        timestamps: false,
     });
 }

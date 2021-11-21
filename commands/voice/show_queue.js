@@ -7,7 +7,7 @@ module.exports = {
   args: false,
   guildOnly: true,
   async execute(msg, args) {
-    if (!msg.client.queues.has(msg.guild))
+    if (!msg.client.queues.has(msg.guild) || msg.client.queues.get(msg.guild).empty())
       return msg.channel.send({
         embed: { color: 0xe83f3f, description: "The queue is empty." },
       });

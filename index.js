@@ -2,34 +2,35 @@ const filesystem = require("fs");
 
 const Discord = require("discord.js");
 const { token } = require("./config.json");
-const { Users } = require("./economy_database/db_objects");
+const User = require("./xp_database/db_objects");
 const chalk = require("chalk");
 
 const client = new Discord.Client();
 
 client.commands = new Discord.Collection();
-client.currency = new Discord.Collection();
+client.experiences = new Discord.Collection();
 client.queues = new Discord.Collection();
 client.cooldowns = new Discord.Collection();
 
-Reflect.defineProperty(client.currency, "add", {
-  value: async function add(id, amount) {
-    const user = client.currency.get(id);
+Reflect.defineProperty(client.experiences, "add", {
+  value: async function add(id, amount, timestamp) {
+    const user = await client.experiences.get(id);
     if (user) {
-      user.balance += Number(amount);
-      return user.save();
+      user.addXP(Number(amount));
+      user.setLastMessageTime(timestamp);
+      return user;
     }
-    const newUser = await Users.create({ user_id: id, balance: amount + 10 });
-    client.currency.set(id, newUser);
+    const newUser = await User.create({ user_id: id, experience:amount, last_message_time: timestamp}).catch(console.error);
+    await client.experiences.set(id, newUser);
     return newUser;
   },
 });
-Reflect.defineProperty(client.currency, "getBalance", {
+Reflect.defineProperty(client.experiences, "getExperience", {
   value: async function getBalance(id) {
-    const user = client.currency.get(id);
+    const user = await client.experiences.get(id);
     return user
-      ? user.balance
-      : await Users.create({ user_id: id, balance: 10 }).balance;
+      ? user.experience
+      : await User.create({ user_id: id, experience: 0, last_message_time: new Date().toString() }).then(user => user.experience).catch(console.error);
   },
 });
 

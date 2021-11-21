@@ -1,10 +1,28 @@
 const { prefix } = require("../config.json");
 const chalk = require("chalk");
 const Discord = require("discord.js");
+const User = require("../xp_database/db_objects")
+
+const Sequelize = require('sequelize');
 module.exports = {
   name: "message",
-  execute(msg, client) {
-    if (!msg.content.startsWith(prefix) || msg.author.bot) return;
+  async execute(msg, client) {
+
+    if(msg.author.bot) return;
+
+    let user = await User.findOne({
+      where:{user_id:msg.author.id}
+    });
+    if(!user) user = client.experiences.add(msg.author.id, 0, msg.createdTimestamp);
+    else{
+      const ms = new Date(msg.createdTimestamp).getTime() - new Date(user.last_message_time).getTime();
+      if(ms > 2000){
+        const experience = Math.floor(Math.max(0, Math.min((Math.pow(ms/1200, 0.9), 2500)))); // clamps number between 0-660 (roughly 1 day of waiting)
+        client.experiences.add(msg.author.id, experience, msg.createdTimestamp);
+      }
+    }
+
+    if (!msg.content.startsWith(prefix)) return;
 
     const args = msg.content.slice(prefix.length).trim().split(/ +/);
     if (!args) return;

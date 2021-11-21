@@ -5,6 +5,8 @@ module.exports = {
   alias: ["np", "nowp"],
   args: false,
   guildOnly: true,
+  args: false,
+  usage: "<video>",
   async execute(msg, args) {
     if (!msg.client.queues.has(msg.guild))
       return msg.channel.send({

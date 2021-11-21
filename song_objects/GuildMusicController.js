@@ -114,7 +114,7 @@ module.exports = class GuildMusicController {
   }
 
   currentElapsedTime() {
-    if (this.empty()) return "Nothing is playing.";
+    if (this.empty()) return 0;
     return this.dispatcher.streamTime - this.dispatcher.pausedTime;
   }
 

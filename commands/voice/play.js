@@ -54,8 +54,7 @@ module.exports = {
       : msg.client.queues
           .set(msg.guild, new GuildMusicController(msg.guild.voice))
           .get(msg.guild);
-    await queue.enqueue_list(songs);
-    msg.client.queues.get(msg.guild).dispatcherStatus();
+    queue.enqueue_list(songs);
     return await msg.channel.send({
       embed: {
         color: 0x22e34c,
