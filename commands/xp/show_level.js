@@ -2,7 +2,7 @@ const User = require("../../xp_database/db_objects");
 
 module.exports = {
     name:'xp',
-    alias: ['lvl', 'lv', 'level', 'experience'],
+    alias: ['lvl', 'lv', 'level', 'experience', "show_xp", "show_experience", "showxp", "showexperience", "showlevel", "showlvl"],
     description: 'Shows the experience of you or the mentioned user.',
     usage: `<user>`,
     args:false,
