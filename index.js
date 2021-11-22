@@ -16,9 +16,9 @@ Reflect.defineProperty(client.experiences, "add", {
   value: async function add(id, amount, timestamp) {
     const user = await client.experiences.get(id);
     if (user) {
-      user.addXP(Number(amount));
-      user.setLastMessageTime(timestamp);
-      return user;
+      user.experience += Number(amount);
+      user.last_message_time = timestamp;
+      return user.save();
     }
     const newUser = await User.create({ user_id: id, experience:amount, last_message_time: timestamp}).catch(console.error);
     await client.experiences.set(id, newUser);

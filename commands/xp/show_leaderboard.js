@@ -1,3 +1,4 @@
+const { MessageEmbed } = require('discord.js');
 module.exports = {
     name:'leaderboard',
     alias:['showleaderboard','board', 'lb'],
@@ -5,16 +6,16 @@ module.exports = {
     args:false,
     guildOnly:true,
     async execute(msg, args){
-        return msg.channel.send({embed:{
-            color:0x5dade3,
-            title:`Global leaderboard`,
-            
-            fields:msg.client.experiences.sort((a,b)=>b.experience-a.experience)
-                .first(5)
-                .map((user, position)=>({
+        let msgEmbed = new MessageEmbed().setColor(0x5dade3).setTitle("Global leaderboard");
+        let i = 0;
+        for(let user of msg.client.experiences.sort((a,b)=>b.experience-a.experience)
+        .first(5)){
+            const username = await msg.client.users.fetch(user.user_id).then(user=>user.username)
+            msgEmbed.addFields({
                     name:'\u200B',
-                    value: `\`${position+1}.\` \`${msg.client.users.cache.get(user.user_id).tag}\`: \`${user.experience}\` XP`
-                }))
-        }});
+                    value: `\`${++i}.\` \`${username}\`: \`${user.experience}\` XP`
+            })
+        }
+        return await msg.channel.send({embed:msgEmbed})
     }
 }

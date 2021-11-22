@@ -17,7 +17,7 @@ module.exports = {
     else{
       const ms = new Date(msg.createdTimestamp).getTime() - new Date(user.last_message_time).getTime();
       if(ms > 2000){
-        const experience = Math.floor(Math.max(0, Math.min( Math.pow(ms/800, 0.9), 1000 ))); // clamps number between 0-660 (roughly 1 day of waiting)
+        const experience = Math.max(0, Math.min( Math.pow(ms/8000, 0.6), 1000 )); // clamps number between 0-660 (roughly 1 day of waiting)
         client.experiences.add(msg.author.id, experience, msg.createdTimestamp);
       }
     }
